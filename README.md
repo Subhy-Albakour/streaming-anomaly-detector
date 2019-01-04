@@ -5,6 +5,6 @@ This project is an implementation of BICO (a distance-based clustering algorithm
 Hendrik Fichtenberger, Marc Gillé, Melanie Schmidt, Chris Schwiegelshohn, Christian Sohler:
 BICO: BIRCH Meets Coresets for k-Means Clustering. ESA 2013: 481-492
 
-and extended to an anomaly detector.
+and extended to an anomaly detector  .
 
 
