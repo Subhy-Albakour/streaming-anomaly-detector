@@ -1,7 +1,12 @@
+"""
+
+This module is responsible for the logic of Clustering Features operations
+
+"""
+
 import numpy as np
-    
-def cf_cost(n,s,ss):
-    return ss - (1.0/n) * sum(s**2)
+
+
 
 class ClusteringFeature():
 
@@ -9,9 +14,12 @@ class ClusteringFeature():
     
     This calss represents the elements of the summary of a data set
     it compactes a subset S of the original data set.
-    it stores the number of elements |S|, the sum of these elements sum(S), the sum of the squares sum(S^2)
+    it stores the number of elements |S|, the sum of these elements sum(S), the sum of the squares sum(S^2).
+
+    This class represnts the nodes of CF tree.
+
     
-    Parameters
+    Traits
     ----------
     num: int 
         the number of the original data instances S that are represented by this same Clustering Feature object.
@@ -32,18 +40,72 @@ class ClusteringFeature():
 
 
     def __init__(self,parent,ref):
+        """ Creates new ClusteringFeature (CF).
+        
+        Parameters
+        ----------
+        parent: ClusteringFeature
+            the parent node of this Clustering Feature 
+        
+        ref: Numpy.ndarray of shape (d, )
+            the reference instance of this Clustering Feature 
+
+        """
+
+        # The total number of instances that this CF represents (summarizes)
         self.num=0
+
+        # The linear sum of all instances that this CF represents
         self.s=0
+
+        # The sum of of all Euclidean norms of all instances that this CF represnts
         self.ss=0
-        self.ref=ref 
+
+        # The reference instance  (point) of this CF
+        self.ref=ref
+
+        # List of all children of this CF in CFtree 
+        self.children=[]
+
+        # The parent node of this Clustring Feature Node
+        self.parent=parent
+
+        # The reference instance should be inserted into this Clustering Feature. 
         if ref is not None:
             self.insert(ref)
-        self.children=[]
-        self.parent=parent
-    
         
+        return 
     
+    
+
+    def __str__(self):
+        """ Creates a string represenation of this Clustering Feature """
+
+        return self.to_string("")
+
+        
+    def to_string(self, pref):
+        """ Recursively builds the string represntation of this Clustering Feature
+        
+        Parameters
+        ----------
+        pref: string
+            the prefix that should be added before the representation for it to look like a tree
+         
+        """
+
+        # One line represenation of this Clustring Feature 
+        s="|num = "+str(self.num) +", ss=  "+str(self.ss)+", s= "+str(self.s)
+
+        # the prepresnataion of the children 
+        ch="\n".join([child.to_string(pref+"   ") for child in self.children])
+
+        return pref+ s+"\n"+ch
+
+
     def size(self):
+        """ Recursively computes the size of the tree rooted at this Clustering Feature"""
+
         if self.children is None:
             return 0
        
@@ -60,19 +122,16 @@ class ClusteringFeature():
         Parameters
         ----------
         instance: Numpy.ndarray of shape (d, )
-            a single instance of the data (for R^d)
+            a single instance of the data (from the space R^d)
 
-        Retruns
-        -------
-        self
 
         """
-        #print("---------------insertion---------------------")
+
         self.num=self.num+1
         self.s=self.s+instance
         self.ss=self.ss+sum(instance**2)
 
-        return self
+        return 
 
     
     def cost(self, instance=None):
@@ -95,75 +154,82 @@ class ClusteringFeature():
         res=0
         # compute the cost of this CF
         if instance is  None:
-            res=cf_cost(self.num,self.s,self.ss)
+            res=self.__cf_cost(self.num,self.s,self.ss)
 
         # compute the cost of the new CF supposing that 'insatnce' is inserted
         else:
             num_new=self.num+1
             s_new=self.s+instance
             ss_new=self.ss+sum(instance**2)
-            res=cf_cost(num_new,s_new,ss_new)
+            res=self.__cf_cost(num_new,s_new,ss_new)
 
         return res
 
     def merge(self,other_cf):
+        """ Merges this Clustring Feature with another Clustering Feature
 
+        Parameters
+        ----------
+        other_cf: ClusteringFeature
+            The other Clustering Feature object to be merged
+
+
+        """
+
+        # Updating the Clustering Features
         self.num=self.num+other_cf.num
         self.s=self.s+other_cf.s
         self.ss=self.ss+other_cf.ss
 
+        # Making the children of the other object children of the new merged  object
         for child in other_cf.children:
             self.children.append(child)
             child.parent=self
         
-        return self
+        return 
+
+
     
     def merge_cost(self,other_cf):
+        """ Computes the cost of the merged object but without actually performing the merge
+        
+        Notes
+        _____
+        This function does not perform the merge, it just computes what the cost would be in case of merging
+        
+        Parameters
+        ----------
+        other_cf: Clustering Feature
+            The other Clustering Feature object to be (hypothetically)merged 
+        
+        Returns
+        -------
+        float
+            The cost of the Clustring Feature resulted from the merge 
+
+
+        """
         n=self.num+other_cf.num
         s=self.s+other_cf.s
         ss=self.ss+other_cf.ss
 
-        return cf_cost(n,s,ss)
+        return self.__cf_cost(n,s,ss)
+
+    def __cf_cost(self, n, s, ss):
+        """ Computes the cost of a cluster using its features
+
+        Parameters
+        ----------
+        n: int 
+            the number of the original data instances
+
+        s: Numpy.ndarray of shape (d,)
+            the sum of the original data instances.
+
+        ss: float
+            the sum of the square of the Euclidian lengths of the original instances.
+        """
+
+        return ss - (1.0/n) * sum(s**2)
     
-
-        
-        
-
-    def __str__(self):
-        return self.to_string("")
-    def to_string(self, pref):
-        s="|num = "+str(self.num) +", ss=  "+str(self.ss)+", s= "+str(self.s)
-        ch="\n".join([child.to_string(pref+"   ") for child in self.children])
-
-        return pref+ s+"\n"+ch
-
-
-
-
-
-    
-    
-    # def distance(self,instance):
-    #     """ distance
-        
-    #     Computes the distance between this ClusteringFeature and instance
-
-    #     Parameters
-    #     ----------
-    #     instance: Numpy.ndarray of shape (d, )
-    #         a data instance to calculate the distance between 'as defined in the paper'
-        
-    #     Returns
-    #     -------
-    #     float 
-    #         the distance between the instance and the clustering feature
-
-    #     """
-    #     var=self.ss - (1.0/self.num) * sum(self.s*self.s)
-    #     num_new=self,num+1
-    #     s_new=self.s+instance
-    #     ss_new=self.ss+sum(instance*instance)
-    #     var_new=ss_new-(1.0/num_new) * sum(s_new * s_new)
-
-    #     return var_new - var
 
