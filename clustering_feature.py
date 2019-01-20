@@ -6,6 +6,8 @@ This module is responsible for the logic of Clustering Features operations
 
 import numpy as np
 
+from geo.point import Point,CorePoint
+
 
 
 class ClusteringFeature():
@@ -39,7 +41,7 @@ class ClusteringFeature():
     """
 
 
-    def __init__(self,parent,ref):
+    def __init__(self, parent: 'ClusteringFeature', ref:Point):
         """ Creates new ClusteringFeature (CF).
         
         Parameters
@@ -56,7 +58,7 @@ class ClusteringFeature():
         self.num=0
 
         # The linear sum of all instances that this CF represents
-        self.s=0
+        self.s=None
 
         # The sum of of all Euclidean norms of all instances that this CF represnts
         self.ss=0
@@ -84,7 +86,7 @@ class ClusteringFeature():
         return self.to_string("")
 
         
-    def to_string(self, pref):
+    def to_string(self, pref:str):
         """ Recursively builds the string represntation of this Clustering Feature
         
         Parameters
@@ -113,10 +115,10 @@ class ClusteringFeature():
         for cf in self.children:
             s=s+cf.size()
         return s
-        
+
     
 
-    def insert(self,instance):
+    def insert(self,point:Point):
         """ Inserts a  new data instance to this Clustering Feature (CF)
         
         Parameters
@@ -128,13 +130,16 @@ class ClusteringFeature():
         """
 
         self.num=self.num+1
-        self.s=self.s+instance
-        self.ss=self.ss+sum(instance**2)
+        if self.s is None:
+            self.s=point
+        else:
+            self.s += point
+        self.ss=self.ss+sum((point**2).p)
 
         return 
 
     
-    def cost(self, instance=None):
+    def cost(self, point=None):
         """ cost
         
         Computes the cost of this ClusteringFeature (the sum of squared distances to the centroid)
@@ -153,19 +158,19 @@ class ClusteringFeature():
 
         res=0
         # compute the cost of this CF
-        if instance is  None:
+        if point is  None:
             res=self.__cf_cost(self.num,self.s,self.ss)
 
         # compute the cost of the new CF supposing that 'insatnce' is inserted
         else:
             num_new=self.num+1
-            s_new=self.s+instance
-            ss_new=self.ss+sum(instance**2)
+            s_new=self.s+point
+            ss_new=self.ss+sum((point**2).p)
             res=self.__cf_cost(num_new,s_new,ss_new)
 
         return res
 
-    def merge(self,other_cf):
+    def merge(self,other_cf:'ClusteringFeature'):
         """ Merges this Clustring Feature with another Clustering Feature
 
         Parameters
@@ -190,7 +195,7 @@ class ClusteringFeature():
 
 
     
-    def merge_cost(self,other_cf):
+    def merge_cost(self,other_cf:'ClusteringFeature'):
         """ Computes the cost of the merged object but without actually performing the merge
         
         Notes
@@ -214,8 +219,29 @@ class ClusteringFeature():
         ss=self.ss+other_cf.ss
 
         return self.__cf_cost(n,s,ss)
+    
 
-    def __cf_cost(self, n, s, ss):
+    def get_center(self)->Point:
+        if self.s is None:
+            return None
+        center=CorePoint(self.s.scalar_mul(1/self.num),self.num)
+        return center
+    
+
+    def get_descendent_centers(self):
+        if self.children is None:
+            return []
+        
+        res=[]
+        center=self.get_center()
+        if  center is not None :
+            res=[center]
+        for cf in self.children:
+            res.extend(cf.get_descendent_centers())
+        return res
+        
+
+    def __cf_cost(self, n, s:Point, ss):
         """ Computes the cost of a cluster using its features
 
         Parameters
@@ -230,6 +256,6 @@ class ClusteringFeature():
             the sum of the square of the Euclidian lengths of the original instances.
         """
 
-        return ss - (1.0/n) * sum(s**2)
+        return ss - (1.0/n) * sum((s**2).p)
     
 
