@@ -24,7 +24,7 @@ def get_synth(T=1000,n_anoms=250,contextual=False,win=4):
 
     '''
 
-    noise=0.05
+    noise=0.5
 
     y = zeros(T)
 
@@ -40,7 +40,7 @@ def get_synth(T=1000,n_anoms=250,contextual=False,win=4):
 
     anoms = choice(T,n_anoms)                                              #the places
 
-    X[anoms,1] = sin(choice(n_anoms)) + randn(n_anoms) *noise + 2.               # <--- 
+    X[anoms,1] = sin(choice(n_anoms)) + randn(n_anoms) *noise + 10.               # <--- 
 
     y[anoms] = 1.
 
@@ -58,7 +58,7 @@ from skmultiflow.data import DataStream
 
 T = 3000
 
-n_anomalies = int(T / 100)
+n_anomalies = int(T / 10)
 
 X, y = get_synth(T, n_anomalies, contextual=False)
 
@@ -68,8 +68,8 @@ print(T,D)
 
 import matplotlib.pyplot as plt
 
-plt.plot(X[:100,0],'ro-')
-plt.plot(y[:100],'go')
+plt.scatter(X[:,0],X[:,1],c=y)
+#plt.plot(y[:100],'go')
 plt.show()
 
 # Convert data to stream

@@ -1,0 +1,13 @@
+# TEST CONFIGURATION BEGIN
+# Dataset Stream:  -  n_targets: 1
+# Prequential Evaluator: n_wait: 200 - max_samples: 1500 - max_time: inf - output_file: result.csv - batch_size: 1 - pretrain_size: 101 - task_type: classification - show_plot: True - metrics: ['accuracy', 'kappa']
+# TEST CONFIGURATION END
+id,mean_acc_[M0],current_acc_[M0],mean_kappa_[M0],current_kappa_[M0]
+199,0.888889,0.888889,0.000000,0.000000
+399,0.896321,0.900000,0.000000,0.000000
+599,0.891784,0.885000,0.000000,0.000000
+799,0.895565,0.905000,0.000000,0.000000
+999,0.898776,0.910000,0.000000,0.000000
+1199,0.906278,0.940000,0.000000,0.000000
+1399,0.906082,0.905000,0.000000,0.000000
+1499,0.907076,0.910000,0.000000,0.000000

@@ -133,6 +133,11 @@ class CFTree():
             self.rebuild(thresh=2*self.thresh)
         
         return 
+
+    def bulk_insert(self,points): # points : np.ndarray of the shape (:,dim)
+        for point in points:
+            self.insert(Point(point)) 
+        return
     
 
     def rebuild(self,thresh):
@@ -228,7 +233,9 @@ class CFTree():
         return (self.thresh/(1<<(level+3)))#**(1/2)
 
     def get_coreset(self):
-
-        return self.root.get_descendent_centers()
+        centers=self.root.get_descendent_centers()
+        weights=[c.weight for c in centers]
+        centers=np.vstack([c.center.p for c in centers])
+        return (centers,weights)
 
         

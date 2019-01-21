@@ -24,15 +24,18 @@ print(tree.root)
 tree.rebuild(100)
 print(tree.root)
 
-coreset=tree.get_coreset()
+coreset,ws=tree.get_coreset()
 for c in coreset:
     print(c)
 
-xs=[c.center.p[0] for c in coreset]
-ys=[c.center.p[1] for c in coreset]
-ws=[50*c.weight for c in coreset]
+# xs=[c.center.p[0] for c in coreset]
+# ys=[c.center.p[1] for c in coreset]
+# #ws=[50*c.weight for c in coreset]
 
 plt.subplot(121)
-plt.scatter(xs,ys,s=ws)
+plt.scatter(coreset[:,0],coreset[:,1],s=ws)
 plt.title("Coreset")
 plt.show()
+from sklearn.cluster import KMeans
+k=Kmeans(init=)
+np.arange()
