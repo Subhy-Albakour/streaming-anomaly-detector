@@ -9,14 +9,14 @@ class StreamingClusteringModel(ABC):
     
 
     @abstractclassmethod
-    def online(slef,X):
+    def partial_fit(slef,X):
         """
         the online operation, it has to be performed over each batch 
         """
         pass
     
     @abstractclassmethod
-    def fit(self):
+    def fit(self,X):
         """
         the offline operation,
         it is perforemed each  number of batches

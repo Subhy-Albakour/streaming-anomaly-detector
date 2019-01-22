@@ -19,47 +19,31 @@ class OutlierDetector:
 
 
     def partial_fit(self, X, y=None, classes=None):
-        
-        # print("fit-------------")
-        # print(y)
-        #self.y=y
+
         #------------------------------- detecting pretrain phase--------
         #----------------------TODO (the right way)
         if len(X)>=100:
-            self.clustering_model.online(X)
-            self.clustering_model.fit()
+            #self.clustering_model.partial_fit(X)
+            self.clustering_model.fit(X)
             return self
 
 
         self.batch_counter += 1
         
-        if self.remove_outliers:
-            ind=(self.last_prediction==0)# the indecies of non outliers
-            # print("outlier removed:------",len(X)-sum(ind))
-            # print(self.clustering_model.cf_tree.root.size())
-            self.clustering_model.online(X[ind])
+        if self.batch_counter<self.n_update:
+            if self.remove_outliers:
+                ind=(self.last_prediction==0)# the indecies of non outliers
+                self.clustering_model.partial_fit(X[ind])
+            else:
+
+                self.clustering_model.partial_fit(X)
         else:
-            # print("Deafualt --------")
-            # print(self.clustering_model.cf_tree.root.size())
-            self.clustering_model.online(X)
-        
-        if self.batch_counter==self.n_update:
-            self.clustering_model.fit()
+            if self.remove_outliers:
+                ind=(self.last_prediction==0)# the indecies of non outliers
+                self.clustering_model.fit(X[ind])
+            else:
+                self.clustering_model.fit(X)
 
-        # if self.batch_counter<self.n_update:
-        #     if self.remove_outliers:
-        #         ind=(self.last_prediction==0)# the indecies of non outliers
-        #         self.clustering_model.online(X[ind])
-        #     else:
-        #         self.clustering_model.online(X)
-        #     return self
-        # if self.remove_outliers:
-        #     ind=(self.last_prediction==0)
-        #     self.clustering_model.online(X[ind])
-        #     self.clustering_model.fit()
-
-        # self.clustering_model.online(X)
-        # self.clustering_model.fit()
 
         return self
 
@@ -69,16 +53,10 @@ class OutlierDetector:
         min_dist=dist[range(len(dist)),y]
         logic_classification=(min_dist>=self.thresh)
         outlier_pred=np.array([1 if p else 0 for p in logic_classification ])
+
         if self.remove_outliers:
-            #print("--------- rem  ",self.clustering_model.cf_tree.get_coreset())
             self.last_prediction=outlier_pred
-        # else :
-        #     print("--------- def  ",self.clustering_model.cf_tree.get_coreset())
-        
-        # print("outlier-----------------")
-        # print(outlier_pred)
-        #print(min_dist)
-        # print(dist)
+
         return outlier_pred
     
 
