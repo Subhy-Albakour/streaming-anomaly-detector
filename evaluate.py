@@ -13,12 +13,10 @@ import data_generator
 
 matplotlib.interactive(True)
 
-def generate_data():
+def generate_data(n_samples):
 
 # 1. Create a stream
     centers=[(0,0),(5,5),(-5,7)]
-    n_samples=20000
-    random_state=3
     X,y=data_generator.generate_clusters_with_outliers_2d(centers,n_samples,outlier_ratio=0.1,outlier_distance=0.7,outlier_std_ratio=3)
     return X,y
 
@@ -61,7 +59,7 @@ h = [detector1,detector2]
 
 evaluator = EvaluatePrequential(pretrain_size=101, max_samples=n_samples, show_plot=True, 
                                 metrics=['accuracy', 'kappa'], output_file='result.csv', 
-                                batch_size=100)
+                                batch_size=10)
 
 #visualize data
 
