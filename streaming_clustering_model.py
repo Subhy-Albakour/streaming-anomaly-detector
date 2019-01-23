@@ -29,6 +29,12 @@ class StreamingClusteringModel(ABC):
         computes the distances of the data sample to the clusters
         """
         pass
+        
+    @abstractclassmethod
+    def score(self,X):
+        """
+        """
+        pass
 
     @abstractclassmethod
     def predict(self,X):

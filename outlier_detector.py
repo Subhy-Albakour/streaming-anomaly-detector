@@ -60,17 +60,6 @@ class OutlierDetector:
         return outlier_pred
     
 
-# class ConstantClassifier:
-#     def __init__(self):
-#         pass
-    
-#     def partial_fit(self,X,y=None,classes=None):
-        
-#         return self
-#     def predict(self,X):
-#         n,=X.shape
-        
-#         return np.zeros(n)
 
 class ConstantClassifier:
 

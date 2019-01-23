@@ -11,7 +11,7 @@ class BICO(StreamingClusteringModel):
         # self.dim=dim
         # self.thresh=thresh
         self.model=kmeans_model
-        self.cf_tree=CFTree(dim=2,thresh=0.01,max_nodes= max_nodes)
+        self.cf_tree=CFTree(dim=dim,thresh=thresh,max_nodes= max_nodes)
     
 
     def partial_fit(self,X): # the online operation in streaming configuration
@@ -33,6 +33,10 @@ class BICO(StreamingClusteringModel):
     def transform(self,X): # transform from cluster to distance space
         dist=self.model.transform(X)
         return dist
+    
+    def score(self,X):
+        s=self.model.score(X)
+        return s
 
     
     def predict(self,X):

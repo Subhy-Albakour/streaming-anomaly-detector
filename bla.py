@@ -1,10 +1,15 @@
-import pandas as pd
+import numpy as np
 
-data_file="data/mulcross.csv"
-df = pd.read_csv(data_file, comment='#')
-y=df['Target'].values
-anoms=(y=="'Anomaly'")
-normal=(y=="'Normal'")
-y[anoms]=1
-y[normal]=0
-X = df.drop(["Target"], axis=1)
+bico= np.loadtxt("bico_50.txt", dtype=float)
+kmeans=np.loadtxt("kmeans_res.txt", dtype=float)
+avg_bico=[sum(bico[range(i)])/(i+1.) for i in range(len(kmeans))]
+avg_kmeans=[sum(kmeans[range(i)])/(i+1.) for i in range(len(kmeans))]
+
+import matplotlib.pyplot as plt
+plt.plot(avg_bico,"r-",label="BICO")
+plt.plot(avg_kmeans,"g-",label="Kmeans")
+plt.xlabel("Batch Number")
+plt.ylabel("Cluster Cost")
+plt.legend()
+plt.savefig("cluster compare.png")
+plt.show()
