@@ -33,9 +33,9 @@ for c in coreset:
 # #ws=[50*c.weight for c in coreset]
 
 plt.subplot(121)
-plt.scatter(coreset[:,0],coreset[:,1],s=ws)
-plt.title("Coreset")
+plt.scatter(coreset[:,0],coreset[:,1],s=[50*w for w in ws])
+plt.title("Coreset (size is directly\n related to the weight)")
+plt.subplot(122)
+plt.scatter(data[:,0],data[:,1])
+plt.title("original data")
 plt.show()
-from sklearn.cluster import KMeans
-k=Kmeans(init=)
-np.arange()

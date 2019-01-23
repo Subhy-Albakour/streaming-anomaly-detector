@@ -12,7 +12,7 @@ from outlier_detector import OutlierDetector,ConstantClassifier
 import data_generator
 
 
-#matplotlib.interactive(True)
+matplotlib.interactive(True)
 
 def generate_data(n_samples):
 
@@ -44,7 +44,7 @@ random_state=3
 
 # 2. Prepare for use
 stream.prepare_for_use()
-# 2. Instantiate the HoeffdingTree classifier
+
 kmeans1=KMeans(n_clusters=n_clusters, random_state=random_state,init="k-means++")
 kmeans2=KMeans(n_clusters=n_clusters, random_state=random_state,init="k-means++")
 
@@ -75,14 +75,11 @@ evaluator = EvaluatePrequential(pretrain_size=101, max_samples=n_samples, show_p
 #visualize data
 
 plt.scatter(X[:,0],X[:,1],c=y)
-# ind=y==1
-# plt.scatter(X[ind,0],X[ind,1],c=2+np.zeros(len(X[ind])))
-plt.savefig("dataset")
+
 plt.show()
 # 4. Run
 evaluator.evaluate(stream=stream, model=h)
-#plt.scatter(X[:,0],X[:,1],c=y)
-# plt.show()
+
 
 
 
